@@ -1,9 +1,17 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Header from "./components/header";
 import ToDoItem from "./components/todoItem";
 import AddToDoItem from "./components/addToDoItem";
+import Sandbox from "./components/sandbox";
 
 export default function App() {
   const [toDoList, setToDoList] = useState([
@@ -17,26 +25,42 @@ export default function App() {
     });
   };
   const submitHandler = (text) => {
-    setToDoList((prevToDoList) => {
-      return [{ text: text, key: Math.random().toString() }, ...prevToDoList];
-    });
+    if (text.length > 3) {
+      setToDoList((prevToDoList) => {
+        return [{ text: text, key: Math.random().toString() }, ...prevToDoList];
+      });
+    } else {
+      Alert.alert("Alert", "To do item must be minimum 3 chars.", [
+        {
+          text: "Ok",
+          onPress: () => console.log("Alert closed"),
+        },
+      ]);
+    }
   };
   return (
-    <View style={styles.container}>
-      <Header />
-      <View style={styles.content}>
-        <AddToDoItem submitHandler={submitHandler} />
-        <View style={styles.list}>
-          <FlatList
-            data={toDoList}
-            renderItem={({ item }) => (
-              <ToDoItem item={item} pressHandler={pressHandler} />
-            )}
-          />
+    // <Sandbox />
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <Header />
+        <View style={styles.content}>
+          <AddToDoItem submitHandler={submitHandler} />
+          <View style={styles.list}>
+            <FlatList
+              data={toDoList}
+              renderItem={({ item }) => (
+                <ToDoItem item={item} pressHandler={pressHandler} />
+              )}
+            />
+          </View>
         </View>
+        <StatusBar style="auto" />
       </View>
-      <StatusBar style="auto" />
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -46,9 +70,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   content: {
+    flex: 1,
     padding: 40,
+    backgroundColor: "yellow",
   },
   list: {
+    flex: 1,
     marginTop: 40,
+    backgroundColor: "lightgreen",
   },
 });
