@@ -1,13 +1,4 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  Alert,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";

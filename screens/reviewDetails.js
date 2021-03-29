@@ -3,7 +3,7 @@ import { View, Text, Image } from "react-native";
 import { globalStyles } from "../styles/global";
 import Card from "../shared/card";
 
-export default function ReviewDetails({ route, navigation }) {
+export default function ReviewDetails({ route }) {
   const { item } = route.params;
   let image = "";
   if (item.title === "Wonder Woman 1984") {
