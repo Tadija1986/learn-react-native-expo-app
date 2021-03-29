@@ -1,7 +1,9 @@
 import React from "react";
-import { View, TextInput, Button } from "react-native";
+import { View, Text, TextInput, Button } from "react-native";
 import { globalStyles } from "../styles/global";
-import { Formik } from "formik";
+import { Formik, yupToFormErrors } from "formik";
+import * as Yup from "yup";
+import FlatButton from "../shared/button";
 
 const initialValues = {
   title: "",
@@ -9,14 +11,32 @@ const initialValues = {
   genre: "",
 };
 
+const validationSchema = Yup.object({
+  title: Yup.string().required().min(4),
+  rating: Yup.string()
+    .required()
+    .test(
+      "is_number_1_5",
+      "Rating must be a number between 1 and 5",
+      (value) => {
+        return !isNaN(value) && parseInt(value) < 6 && parseInt(value) > 0;
+      }
+    ),
+  genre: Yup.string().required().min(3),
+});
+
 export default function ReviewForm({ addReview }) {
   const formSubmit = (values, onSubmitProps) => {
-    addReview(values);
     onSubmitProps.resetForm();
+    addReview(values);
   };
   return (
     <View style={globalStyles.container}>
-      <Formik initialValues={initialValues} onSubmit={formSubmit}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={formSubmit}
+      >
         {(formikProps) => {
           return (
             <View>
@@ -25,25 +45,33 @@ export default function ReviewForm({ addReview }) {
                 placeholder="title"
                 onChangeText={formikProps.handleChange("title")}
                 value={formikProps.values.title}
+                onBlur={formikProps.handleBlur("title")}
               />
+              <Text style={globalStyles.errorText}>
+                {formikProps.touched.title && formikProps.errors.title}
+              </Text>
               <TextInput
                 keyboardType="numeric"
                 style={globalStyles.input}
                 placeholder="rating [1-5]"
                 onChangeText={formikProps.handleChange("rating")}
                 value={formikProps.values.rating}
+                onBlur={formikProps.handleBlur("rating")}
               />
+              <Text style={globalStyles.errorText}>
+                {formikProps.touched.rating && formikProps.errors.rating}
+              </Text>
               <TextInput
                 style={globalStyles.input}
                 placeholder="genre"
                 onChangeText={formikProps.handleChange("genre")}
                 value={formikProps.values.genre}
+                onBlur={formikProps.handleBlur("genre")}
               />
-              <Button
-                title="Submmit"
-                color="maroon"
-                onPress={formikProps.handleSubmit}
-              />
+              <Text style={globalStyles.errorText}>
+                {formikProps.touched.genre && formikProps.errors.genre}
+              </Text>
+              <FlatButton text="submmit" onPress={formikProps.handleSubmit} />
             </View>
           );
         }}
